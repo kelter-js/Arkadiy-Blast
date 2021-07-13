@@ -1,15 +1,14 @@
-import {
-  onMouseDown,
-  blockAnimation,
-} from './script.js'
-
+import { onMouseDown } from './script.js'
 import { Constants } from './constants.js'
+import { Animation } from './animation.js'
 
 class Block extends PIXI.Sprite {
   #ticker;
   row;
   column;
   #type;
+  #animations;
+  #currentAnimation;
 
   constructor (options) {
     super();
@@ -19,19 +18,32 @@ class Block extends PIXI.Sprite {
     this.row = options.row;
     this.column = options.column;
     this.#type = options.blockType;
+    this.anchor.set(Constants.blockAnchorPoint);
+
+    this.#animations = {
+      'fall': Animation.fallAnimation,
+      'scale': Animation.scaleAnimation,
+    };
+
+    this.#currentAnimation = 'fall';
 
     this.width = Constants.blockWidth;
     this.height = Constants.blockHeight;
 
     this.interactive = true;
     this.on('mousedown', onMouseDown);
-
-    this.#createTicker();
+    this.initAnimation();
   }
 
-  #createTicker() {
+  setAnimation(value) {
+    this.#currentAnimation = value;
+    return this;
+  }
+
+  initAnimation() {
     this.#ticker = new PIXI.Ticker();
-    this.#ticker.add(delta => blockAnimation(delta, this));
+    this.#ticker.add(delta => this.#animations[this.#currentAnimation](delta, this));
+    return this;
   }
 
   startAnimation() {
@@ -40,6 +52,7 @@ class Block extends PIXI.Sprite {
 
   stopAnimation() {
     this.#ticker.stop();
+    return this;
   }
 
   get type() {
@@ -47,4 +60,4 @@ class Block extends PIXI.Sprite {
   }
 }
 
-export {Block}
+export { Block }

@@ -1,12 +1,32 @@
-//import {Block} from './block.js'
 import { Board } from './board.js'
 import { Constants } from './constants.js'
+import { ScoreFrame } from './scoreFrame.js'
+import { Score } from './score.js'
 
-let generatedBoard = new Board(
+const generatedBoard = new Board(
+  Constants.blockPadding,
+  Constants.blockMoveIndex,
   Constants.columnsAmount,
   Constants.boardCoordinateX,
   Constants.boardCoordinateY,
-  Constants.blockColors
+  Constants.blockColors,
+  Constants.blockWidth,
+  Constants.blockHeight,
+  Constants.blockAnchorPoint
+);
+
+const scoreFrame = new ScoreFrame(
+  Constants.scoreX,
+  Constants.scoreY,
+  Constants.scoreWidth,
+  Constants.scoreHeight,
+  Constants.scorePath
+);
+
+const score = new Score(
+  Constants.scoreStart,
+  Constants.scoreModifier,
+  Constants.scoreTextStyle
 );
 
 let blocks;
@@ -22,6 +42,10 @@ const setup = (img) => {
     board.height = Constants.boardHeight;
 
     app.stage.addChild(board);
+    scoreFrame.getTextures();
+    score.setText(Constants.scoreTextPositionX, Constants.scoreTextPositionY);
+    app.stage.addChild(scoreFrame);
+    app.stage.addChild(score);
     blocks = generatedBoard.fillBlockStorage(Constants.rowsAmount);
   }
 }
@@ -56,6 +80,21 @@ const moveBlockColumn = (blockX, blockY) => {
   }
 }
 
+const reFillBoard = (blockStorage) => {
+  blockStorage.map((row, rowIndex) => {
+    row.map((column, columnIndex) => {
+      if (!column) {
+        let createdBlock = generatedBoard.createBlock(null, rowIndex, columnIndex);
+        createdBlock.width = 0;
+        createdBlock.height = 0;
+        createdBlock.setAnimation('scale').initAnimation().startAnimation();
+        blocks[rowIndex][columnIndex] = createdBlock;
+        app.stage.addChild(createdBlock);
+      }
+    })
+  })
+}
+
 const onMouseDown = (eventData) => {
   let target = eventData.target;
   hittedBlocks = [];
@@ -63,7 +102,8 @@ const onMouseDown = (eventData) => {
   if (hittedBlocks.length < 2) return;
   removeBlocks(hittedBlocks);
   moveBlocks(hittedBlocks);
-  return target;
+  score.increaseCounter(hittedBlocks.length);
+  reFillBoard(blocks)
 }
 
 document.body.appendChild(app.view);
@@ -74,25 +114,15 @@ app.loader
     Constants.blockColors[1],
     Constants.blockColors[2],
     Constants.blockColors[3],
-    Constants.blockColors[4]])
+    Constants.blockColors[4],
+    Constants.scorePath])
   .load(setup('gameplay'));
 
 let hittedBlocks = [];
 
 const reRenderBlock = (block) => {
-  block.stopAnimation();
-  block.startAnimation();
+  block.stopAnimation().setAnimation('fall').initAnimation().startAnimation();
   //block.alpha = 0.5;
-}
-
-const blockAnimation = (delta, block) => {
-  let endCoordinate = Constants.boardCoordinateY + block.row * (Constants.blockWidth + Constants.spaceBetweenBlock) + 15;
-  if (block.y <= endCoordinate) {
-    block.y += 5 * delta;
-  } else {
-    block.y = endCoordinate;
-    block.stopAnimation();
-  }
 }
 
 const moveBlocks = (movableBlocks) => {
@@ -109,7 +139,6 @@ const removeBlocks = (removableBlocks) => {
     blocks[blockX][blockY] = null;
   });
 }
-
 /**
  * проверяет элементы вокруг выбранного на соответствие типа (цвета)
  * @param {*} x индекс элемента по горизонтали
@@ -131,7 +160,6 @@ const onBlockHit = (blockRow, blockColumn, type) => {
 
 export {
   onMouseDown,
-  blockAnimation,
   blocks,
   app
 }

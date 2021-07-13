@@ -10,6 +10,10 @@ class Utils {
   static getBoardSize(boardPadding, elementWidth, elementsAmount, spaceBetween) {
     return boardPadding + (elementWidth * elementsAmount) + (elementsAmount * spaceBetween);
   }
+
+  static getPercentage(num, percent) {
+    return (num / 100) * percent;
+  }
 }
 
 export { Utils }
