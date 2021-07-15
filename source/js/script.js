@@ -1,7 +1,28 @@
 import { Board } from './board.js'
 import { Constants } from './constants.js'
-import { ScoreFrame } from './scoreFrame.js'
+import { Frame } from './frame.js'
 import { Score } from './score.js'
+import { Text } from './text.js'
+import { PauseButton } from './pause.js'
+import { Game } from './game.js'
+
+let type = 'WebGL'
+
+if(!PIXI.utils.isWebGLSupported()){
+  type = 'canvas'
+}
+
+PIXI.utils.sayHello(type)
+
+let app = new PIXI.Application({
+  width: Constants.minWidth,
+  height: Constants.minHeight,
+  backgroundColor: Constants.bgColor,
+});
+
+document.body.appendChild(app.view);
+
+const game = new Game();
 
 const generatedBoard = new Board(
   Constants.blockPadding,
@@ -15,7 +36,15 @@ const generatedBoard = new Board(
   Constants.blockAnchorPoint
 );
 
-const scoreFrame = new ScoreFrame(
+const gameBoard = new Frame(
+  Constants.boardCoordinateX,
+  Constants.boardCoordinateY,
+  Constants.boardWidth,
+  Constants.boardHeight,
+  Constants.boardPath
+);
+
+const scoreFrame = new Frame(
   Constants.scoreX,
   Constants.scoreY,
   Constants.scoreWidth,
@@ -23,46 +52,77 @@ const scoreFrame = new ScoreFrame(
   Constants.scorePath
 );
 
+const maxScoreFrame = new Frame(
+  Constants.maxScoreX,
+  Constants.maxScoreY,
+  Constants.maxScoreWidth,
+  Constants.maxScoreHeight,
+  Constants.maxScorePath
+);
+
 const score = new Score(
   Constants.scoreStart,
   Constants.scoreModifier,
-  Constants.scoreTextStyle
+  Constants.scoreTextPositionX,
+  Constants.scoreTextPositionY
+);
+
+const maxScore = new Text(
+  Constants.maxScoreTextX,
+  Constants.maxScoreTextY,
+  Constants.maxScore
+);
+
+const pauseButton = new PauseButton(
+  Constants.pauseButtonX,
+  Constants.pauseButtonY,
+  Constants.pauseButtonWidth,
+  Constants.pauseButtonHeight,
+  Constants.pauseButtonPath,
+);
+
+const progressBarFrame = new Frame(
+  Constants.progressBarX,
+  Constants.progressBarY,
+  Constants.progressBarWidth,
+  Constants.progressBarHeight,
+  Constants.progressBarPath
 );
 
 let blocks;
 
-const setup = (img) => {
+const setup = () => {
   return () => {
-    let board = new PIXI.Sprite(app.loader.resources[`./../img/icons/${img}.png`].texture);
+    gameBoard.setTextures();
+    scoreFrame.setTextures();
+    maxScoreFrame.setTextures();
+    pauseButton.setTextures();
+    progressBarFrame.setTextures();
 
-    board.x = Constants.boardCoordinateX;
-    board.y = Constants.boardCoordinateY;
-
-    board.width = Constants.boardWidth;
-    board.height = Constants.boardHeight;
-
-    app.stage.addChild(board);
-    scoreFrame.getTextures();
-    score.setText(Constants.scoreTextPositionX, Constants.scoreTextPositionY);
+    app.stage.addChild(gameBoard);
     app.stage.addChild(scoreFrame);
     app.stage.addChild(score);
+    app.stage.addChild(maxScoreFrame);
+    app.stage.addChild(maxScore);
+    app.stage.addChild(pauseButton);
+    app.stage.addChild(progressBarFrame);
     blocks = generatedBoard.fillBlockStorage(Constants.rowsAmount);
+    game.play();
   }
 }
 
-let type = "WebGL"
-
-if(!PIXI.utils.isWebGLSupported()){
-  type = "canvas"
-}
-
-PIXI.utils.sayHello(type)
-
-let app = new PIXI.Application({
-  width: Constants.minWidth,
-  height: Constants.minHeight,
-  backgroundColor: Constants.bgColor,
-});
+app.loader
+  .add([Constants.blockColors[0],
+    Constants.blockColors[1],
+    Constants.blockColors[2],
+    Constants.blockColors[3],
+    Constants.blockColors[4],
+    Constants.scorePath,
+    Constants.maxScorePath,
+    Constants.pauseButtonPath,
+    Constants.progressBarPath,
+    Constants.boardPath])
+  .load(setup());
 
 /**
  * передвигает элементы в колонке, меняя элементы по координатам
@@ -105,18 +165,6 @@ const onMouseDown = (eventData) => {
   score.increaseCounter(hittedBlocks.length);
   reFillBoard(blocks)
 }
-
-document.body.appendChild(app.view);
-
-app.loader
-  .add("./../img/icons/gameplay.png")
-  .add([Constants.blockColors[0],
-    Constants.blockColors[1],
-    Constants.blockColors[2],
-    Constants.blockColors[3],
-    Constants.blockColors[4],
-    Constants.scorePath])
-  .load(setup('gameplay'));
 
 let hittedBlocks = [];
 
@@ -161,5 +209,6 @@ const onBlockHit = (blockRow, blockColumn, type) => {
 export {
   onMouseDown,
   blocks,
-  app
+  app,
+  game,
 }

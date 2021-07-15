@@ -18,8 +18,8 @@ class Animation {
 
   static scaleAnimation (delta, block) {
     if (block.width <= Constants.blockWidth) {
-      block.width += 1 * delta;
-      block.height += 1 * delta;
+      block.width += 2 * delta;
+      block.height += 2 * delta;
     } else {
       block.width = Constants.blockWidth;
       block.height = Constants.blockHeight;

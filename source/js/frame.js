@@ -1,6 +1,6 @@
 import { app } from './script.js'
 
-class ScoreFrame extends PIXI.Sprite {
+class Frame extends PIXI.Sprite {
   #texture;
 
   constructor(x, y, width, height, texture) {
@@ -13,9 +13,9 @@ class ScoreFrame extends PIXI.Sprite {
     this.zOrder = 0;
   }
 
-  getTextures () {
+  setTextures () {
     this.texture = app.loader.resources[this.#texture].texture;
   }
 }
 
-export { ScoreFrame }
+export { Frame }
