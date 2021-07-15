@@ -5,6 +5,7 @@ import { Score } from './score.js'
 import { Text } from './text.js'
 import { PauseButton } from './pause.js'
 import { Game } from './game.js'
+import { ProgressLine } from './progress-line.js'
 
 let type = 'WebGL'
 
@@ -89,6 +90,14 @@ const progressBarFrame = new Frame(
   Constants.progressBarPath
 );
 
+const progressLine = new ProgressLine(
+  Constants.progressLineX,
+  Constants.progressLineY,
+  Constants.progressLineMaxWidth,
+  Constants.progressLineHeight,
+  Constants.progressLinePath
+);
+
 let blocks;
 
 const setup = () => {
@@ -98,6 +107,7 @@ const setup = () => {
     maxScoreFrame.setTextures();
     pauseButton.setTextures();
     progressBarFrame.setTextures();
+    progressLine.setTextures();
 
     app.stage.addChild(gameBoard);
     app.stage.addChild(scoreFrame);
@@ -106,6 +116,7 @@ const setup = () => {
     app.stage.addChild(maxScore);
     app.stage.addChild(pauseButton);
     app.stage.addChild(progressBarFrame);
+    app.stage.addChild(progressLine);
     blocks = generatedBoard.fillBlockStorage(Constants.rowsAmount);
     game.play();
   }
@@ -121,6 +132,7 @@ app.loader
     Constants.maxScorePath,
     Constants.pauseButtonPath,
     Constants.progressBarPath,
+    Constants.progressLinePath,
     Constants.boardPath])
   .load(setup());
 
@@ -163,6 +175,7 @@ const onMouseDown = (eventData) => {
   removeBlocks(hittedBlocks);
   moveBlocks(hittedBlocks);
   score.increaseCounter(hittedBlocks.length);
+  progressLine.increaseWidth(score.currentScore, Constants.maxScore);
   reFillBoard(blocks)
 }
 

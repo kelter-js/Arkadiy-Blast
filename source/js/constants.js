@@ -38,6 +38,12 @@ const PROGRESS_BAR_HEIGHT = Utils.getPercentage(MIN_HEIGHT, 10.5);
 const PROGRESS_BAR_X = Utils.getCenterCoordinates(MIN_WIDTH, PROGRESS_BAR_WIDTH);
 const PROGRESS_BAR_Y = 0;
 
+const PROGRESS_LINE_PATH = './../img/icons/progress-line.png';
+const PROGRESS_LINE_MAX_WIDTH = Utils.getPercentage(MIN_WIDTH, 35.4);
+const PROGRESS_LINE_HEIGHT = Utils.getPercentage(MIN_HEIGHT, 3.4);
+const PROGRESS_LINE_X = Utils.getPercentage(MIN_WIDTH, 32.1);
+const PROGRESS_LINE_Y = Utils.getPercentage(MIN_HEIGHT, 4.7);
+
 const SCORE_START = 0;
 const SCORE_MODIFIER = 10;
 const SCORE_WIDTH = Utils.getPercentage(MIN_WIDTH, 11.3);
@@ -65,7 +71,7 @@ const BLOCK_COLORS = {
 };
 
 const SCORE_PATH = './../img/icons/money-2.png';
-const SCORE_TEXT_POSITION_X = SCORE_POSITION_X + Utils.getPercentage(SCORE_POSITION_X, 60);
+const SCORE_TEXT_POSITION_X = SCORE_POSITION_X + Utils.getPercentage(SCORE_POSITION_X, 50);
 const SCORE_TEXT_POSITION_Y = SCORE_POSITION_Y + Utils.getPercentage(SCORE_POSITION_Y, 10);
 
 const SCORE_TEXT_STYLE = new PIXI.TextStyle({
@@ -300,6 +306,26 @@ class Constants {
 
   static get progressBarY() {
     return PROGRESS_BAR_Y;
+  }
+
+  static get progressLinePath() {
+    return PROGRESS_LINE_PATH;
+  }
+
+  static get progressLineMaxWidth() {
+    return PROGRESS_LINE_MAX_WIDTH;
+  }
+
+  static get progressLineHeight() {
+    return PROGRESS_LINE_HEIGHT;
+  }
+
+  static get progressLineX() {
+    return PROGRESS_LINE_X;
+  }
+
+  static get progressLineY() {
+    return PROGRESS_LINE_Y;
   }
 }
 
