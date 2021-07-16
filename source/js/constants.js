@@ -9,6 +9,7 @@ const BLOCK_PADDING = 15;
 const SPACE_BETWEEN_BLOCK = 10;
 const COLUMNS_AMOUNT = 9;
 const ROWS_AMOUNT = 7;
+const MIN_ELEMENTS_DESTROY = 2;
 const BLOCK_ANCHOR_POINT = .5;
 
 const DISPLAY_PADDING = 40;
@@ -326,6 +327,10 @@ class Constants {
 
   static get progressLineY() {
     return PROGRESS_LINE_Y;
+  }
+
+  static get minElementsDestroy() {
+    return MIN_ELEMENTS_DESTROY;
   }
 }
 

@@ -1,4 +1,4 @@
-import { app, blocks } from './script.js'
+import { app, generatedBoard } from './script.js'
 import { Text } from './text.js'
 import { Constants } from './constants.js'
 
@@ -38,11 +38,7 @@ class Start extends State {
   }
 
   play() {
-    blocks.forEach(row => {
-      row.forEach(column => {
-        column.interactive = true;
-      })
-    })
+    generatedBoard.setBlocksInteractiveState(true);
   }
 }
 
@@ -56,11 +52,7 @@ class PauseState extends State {
   }
 
   setElementsNonInteractive() {
-    blocks.forEach(row => {
-      row.forEach(column => {
-        column.interactive = false;
-      })
-    });
+    generatedBoard.setBlocksInteractiveState(false);
   }
 
   createPauseNotification() {

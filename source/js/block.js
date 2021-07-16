@@ -1,4 +1,3 @@
-import { onMouseDown } from './script.js'
 import { Constants } from './constants.js'
 import { Animation } from './animation.js'
 
@@ -17,6 +16,7 @@ class Block extends PIXI.Sprite {
     this.y = options.y;
     this.row = options.row;
     this.column = options.column;
+    this.interactive = true;
     this.#type = options.blockType;
     this.anchor.set(Constants.blockAnchorPoint);
 
@@ -30,8 +30,6 @@ class Block extends PIXI.Sprite {
     this.width = Constants.blockWidth;
     this.height = Constants.blockHeight;
 
-    this.interactive = true;
-    this.on('mousedown', onMouseDown);
     this.initAnimation();
   }
 

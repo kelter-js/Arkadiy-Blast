@@ -14,6 +14,10 @@ class Utils {
   static getPercentage(num, percent) {
     return (num / 100) * percent;
   }
+
+  static sortRow(a, b) {
+    return a.row - b.row;
+  }
 }
 
 export { Utils }

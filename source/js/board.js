@@ -16,34 +16,55 @@ class Board {
   #blockWidth;
   #blockHeight;
   #anchorPoint;
+  #rows;
+  #animationFall;
+  #animationScale;
+  #minDestroyAmount;
+  #scoreInterface;
+  #progressInterface;
   colorTypes;
 
-  constructor (blockPadding, blockMoveIndex, elements, boardX, boardY, colorStorage, blockWidth, blockHeight, anchorPoint) {
+  constructor (blockPadding, blockMoveIndex, elementColumns, elementsRows, boardX, boardY, colorStorage, blockWidth, blockHeight, anchorPoint, minDestroyElements, score, progressLine) {
     this.#blockMoveIndex = blockMoveIndex;
     this.#blockPadding = blockPadding;
     this.#boardX = boardX;
     this.#boardY = boardY;
-    this.#blockStartX = this.#boardX + this.#blockPadding + (Constants.blockWidth * .5);
-    this.#blockStartY = this.#boardY + this.#blockPadding + (Constants.blockHeight * .5);
-    this.#startCoordinateX = this.#blockStartX;
-    this.#startCoordinateY = this.#blockStartY;
     this.#blockWidth = blockWidth;
     this.#blockHeight = blockHeight;
     this.#anchorPoint = anchorPoint;
+    this.#blockStartX = this.#boardX + this.#blockPadding + (this.#blockWidth * this.#anchorPoint);
+    this.#blockStartY = this.#boardY + this.#blockPadding + (this.#blockHeight * this.#anchorPoint);
+    this.#startCoordinateX = this.#blockStartX;
+    this.#startCoordinateY = this.#blockStartY;
     this.colorTypes = colorStorage;
+    this.#minDestroyAmount = minDestroyElements;
+    this.#scoreInterface = score;
+    this.#progressInterface = progressLine;
 
-    this.createColumns(elements);
+    this.#animationFall = 'fall';
+    this.#animationScale = 'scale';
+
+    this.#columns = this.createStorage(elementColumns);
+    this.#rows = this.createStorage(elementsRows);
+  }
+
+  setBlocksInteractiveState(flag) {
+    this.#rows.forEach(row => {
+      row.forEach(column => {
+        column.interactive = flag;
+      })
+    })
   }
 
   getTextures (colorStorage, value) {
     return app.loader.resources[colorStorage[value]].texture;
   }
 
-  createColumns (elementsAmount) {
-    this.#columns = new Array(elementsAmount).fill('');
+  createStorage (elementsAmount) {
+    return new Array(elementsAmount).fill('');
   }
 
-  getCoordinate(startPoistion, blockPadding, positionIndex, distance, elementSize, anchorPoint) {
+  getCoordinate (startPoistion, blockPadding, positionIndex, distance, elementSize, anchorPoint) {
     return (startPoistion + blockPadding) + (positionIndex * distance) + (elementSize * anchorPoint);
   }
 
@@ -57,7 +78,6 @@ class Board {
         'row': row,
         'column': column,
         'x': this.getCoordinate(this.#boardX, this.#blockPadding, column, this.#blockMoveIndex, this.#blockWidth, this.#anchorPoint),
-        //'y': Constants.boardCoordinateY - (7 - row) * 60 - 60,
         'y': this.getCoordinate(this.#boardY, this.#blockPadding, row, this.#blockMoveIndex, this.#blockHeight, this.#anchorPoint),
         'blockType': itemType,
       }
@@ -65,9 +85,85 @@ class Board {
     }
   }
 
-  fillBlockStorage (rowsAmount) {
-    let filledStorage = new Array(rowsAmount).fill('');
-    filledStorage = filledStorage.map((rowBlock, rowIndex) => {
+  //
+  //
+  //
+
+  reRenderBlock (block) {
+    block.stopAnimation().setAnimation(this.#animationFall).initAnimation().startAnimation();
+  }
+
+  moveBlocks (movableBlocks) {
+    movableBlocks.sort(Utils.sortRow).forEach(block => {
+      this.moveBlockColumn(block.row, block.column);
+    });
+  }
+
+  removeBlocks (removableBlocks) {
+    removableBlocks.forEach(removableBlock => {
+      app.stage.removeChild(removableBlock);
+      const blockX = removableBlock.row;
+      const blockY = removableBlock.column;
+      this.#rows[blockX][blockY] = null;
+    });
+  }
+
+  onBlockHit (hittedBlocks, blockRow, blockColumn, type) {
+    if (this.#rows[blockRow] && this.#rows[blockRow][blockColumn]) {
+      const currentBlock = this.#rows[blockRow][blockColumn];
+      if (!hittedBlocks.includes(currentBlock) && currentBlock.type === type) {
+        hittedBlocks.push(currentBlock);
+        this.onBlockHit(hittedBlocks, blockRow + 1, blockColumn, type);
+        this.onBlockHit(hittedBlocks, blockRow - 1, blockColumn, type);
+        this.onBlockHit(hittedBlocks, blockRow, blockColumn + 1, type);
+        this.onBlockHit(hittedBlocks, blockRow, blockColumn - 1, type);
+      }
+    }
+  }
+
+  moveBlockColumn (blockX, blockY) {
+    for (let i = blockX; i > 0; i--) {
+      this.#rows[i][blockY] = this.#rows[i - 1][blockY];
+      this.#rows[i - 1][blockY] = null;
+      if (this.#rows[i][blockY]) {
+        this.#rows[i][blockY].row = i;
+        this.reRenderBlock(this.#rows[i][blockY]);
+      }
+    }
+  }
+
+  reFillBoard (blockStorage) {
+    blockStorage.map((row, rowIndex) => {
+      row.map((column, columnIndex) => {
+        if (!column) {
+          const createdBlock = this.createBlock(null, rowIndex, columnIndex);
+          createdBlock.width = 0;
+          createdBlock.height = 0;
+          createdBlock.setAnimation(this.#animationScale).initAnimation().startAnimation();
+          createdBlock.on('mousedown', this.blockOnMouseDown());
+          this.#rows[rowIndex][columnIndex] = createdBlock;
+          app.stage.addChild(createdBlock);
+        }
+      })
+    })
+  }
+
+  blockOnMouseDown () {
+    return (eventData) => {
+      const target = eventData.target;
+      const hittedBlocks = [];
+      this.onBlockHit(hittedBlocks, target.row, target.column, target.type);
+      if (hittedBlocks.length < this.#minDestroyAmount) return;
+      this.removeBlocks(hittedBlocks);
+      this.moveBlocks(hittedBlocks);
+      this.#scoreInterface.increaseCounter(hittedBlocks.length);
+      this.#progressInterface.increaseWidth(this.#scoreInterface.currentScore);
+      this.reFillBoard(this.#rows);
+    }
+  }
+
+  fillBlockStorage () {
+    this.#rows = this.#rows.map((rowBlock, rowIndex) => {
       this.#columns = this.#columns.map((columnBlock, columnIndex) => {
         const itemType = Utils.randomInteger(0, 4);
 
@@ -81,10 +177,12 @@ class Board {
         };
 
         columnBlock = this.createBlock(options);
-        this.#startCoordinateX += this.#blockMoveIndex;
+
+        columnBlock.on('mousedown', this.blockOnMouseDown());
 
         app.stage.addChild(columnBlock);
 
+        this.#startCoordinateX += this.#blockMoveIndex;
         return columnBlock;
       });
 
@@ -92,7 +190,6 @@ class Board {
       this.#startCoordinateY += this.#blockMoveIndex;
       return this.#columns;
     });
-    return filledStorage;
   }
 }
 
