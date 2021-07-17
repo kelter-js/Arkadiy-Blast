@@ -1,4 +1,7 @@
-import { app, generatedBoard } from './script.js'
+import {
+  app,
+  generatedBoard
+} from './script.js'
 import { Text } from './text.js'
 import { Constants } from './constants.js'
 
@@ -7,7 +10,7 @@ class Game {
   #currentState;
 
   constructor() {
-    this.#states = [new Start(), new PauseState(), new Over()];
+    this.#states = [new Start(), new PauseState(), new End(), new Win()];
     this.#currentState = this.#states[0];
   }
 
@@ -18,6 +21,10 @@ class Game {
 
     this.#currentState = this.#states[index];
     this.play();
+  }
+
+  getCurrentState() {
+    return this.#currentState.state;
   }
 
   play() {
@@ -34,7 +41,7 @@ class State {
 
 class Start extends State {
   constructor() {
-    super('start');
+    super(Constants.gameStates[0]);
   }
 
   play() {
@@ -42,13 +49,31 @@ class Start extends State {
   }
 }
 
-class PauseState extends State {
-  #pause;
-  #sprites;
+class Win extends State {
+  #win;
 
   constructor() {
-    super('pause');
-    this.#pause = new Text(Constants.pause.textX, Constants.pause.textY, Constants.pause.text, Constants.pause.textStyle);
+    super(Constants.gameStates[3]);
+    this.#win = new Text(Constants.centerText, Constants.stateTexts.win, Constants.centerText.textStyle);
+    this.#win.anchor.x = .1;
+  }
+
+  destroy() {
+    app.stage.removeChild(this.#win);
+  }
+
+  play() {
+    generatedBoard.setBlocksInteractiveState(false);
+    app.stage.addChild(this.#win);
+  }
+}
+
+class PauseState extends State {
+  #pause;
+
+  constructor() {
+    super(Constants.gameStates[1]);
+    this.#pause = new Text(Constants.centerText, Constants.stateTexts.pause, Constants.centerText.textStyle);
   }
 
   setElementsNonInteractive() {
@@ -69,13 +94,13 @@ class PauseState extends State {
   }
 }
 
-class Over extends State {
+class End extends State {
   constructor() {
-    super('over');
+    super(Constants.gameStates[2]);
   }
 
   play() {
-    return 'over';
+    generatedBoard.setBlocksInteractiveState(false);
   }
 }
 

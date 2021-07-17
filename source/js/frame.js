@@ -3,13 +3,13 @@ import { app } from './script.js'
 class Frame extends PIXI.Sprite {
   #texture;
 
-  constructor(x, y, width, height, texture) {
+  constructor(options) {
     super();
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.#texture = texture;
+    this.x = options.x;
+    this.y = options.y;
+    this.width = options.width;
+    this.height = options.height;
+    this.#texture = options.path;
     this.zOrder = 0;
   }
 

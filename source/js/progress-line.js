@@ -5,11 +5,15 @@ class ProgressLine extends Frame {
   #maxWidth;
   #maxScore;
 
-  constructor(x, y, width, height, texture, maxScore) {
-    super(x, y, width, height, texture);
-    this.#maxWidth = width;
+  constructor(progressLine, maxScore) {
+    super(progressLine);
+    this.#maxWidth = progressLine.width;
     this.width = 0;
     this.#maxScore = maxScore;
+  }
+
+  resetLine() {
+    this.width = 0;
   }
 
   increaseWidth(currentScore) {

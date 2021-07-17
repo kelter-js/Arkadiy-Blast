@@ -4,15 +4,20 @@ class Score extends Text {
   #count;
   #modifier;
 
-  constructor(startAmount, modifier, x, y) {
-    super(x, y, 0);
-    this.#count = startAmount;
-    this.#modifier = modifier;
+  constructor(score) {
+    super(score);
+    this.#count = score.start;
+    this.#modifier = score.modifier;
     this.text = this.#count;
   }
 
   increaseCounter(value) {
     this.#count += value * this.#modifier;
+    this.text = this.#count;
+  }
+
+  resetScore() {
+    this.#count = 0;
     this.text = this.#count;
   }
 

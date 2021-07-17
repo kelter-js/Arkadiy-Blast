@@ -25,20 +25,21 @@ class Board {
   #actionsInterface;
   colorTypes;
 
-  constructor (blockPadding, blockMoveIndex, elementColumns, elementsRows, boardX, boardY, colorStorage, blockWidth, blockHeight, anchorPoint, minDestroyElements, score, progressLine, endGame, actionCounter) {
-    this.#blockMoveIndex = blockMoveIndex;
-    this.#blockPadding = blockPadding;
-    this.#boardX = boardX;
-    this.#boardY = boardY;
-    this.#blockWidth = blockWidth;
-    this.#blockHeight = blockHeight;
-    this.#anchorPoint = anchorPoint;
+
+  constructor (block, game, board, score, progressLine, endGame, actionCounter) {
+    this.#blockMoveIndex = block.moveIndex;
+    this.#blockPadding = block.padding;
+    this.#boardX = board.x;
+    this.#boardY = board.y;
+    this.#blockWidth = block.width;
+    this.#blockHeight = block.height;
+    this.#anchorPoint = block.anchorPoint;
     this.#blockStartX = this.#boardX + this.#blockPadding + (this.#blockWidth * this.#anchorPoint);
     this.#blockStartY = this.#boardY + this.#blockPadding + (this.#blockHeight * this.#anchorPoint);
     this.#startCoordinateX = this.#blockStartX;
     this.#startCoordinateY = this.#blockStartY;
-    this.colorTypes = colorStorage;
-    this.#minDestroyAmount = minDestroyElements;
+    this.colorTypes = block.colors;
+    this.#minDestroyAmount = game.minElementsDestroy;
     this.#actionsInterface = actionCounter;
 
     this.#scoreInterface = score;
@@ -48,8 +49,8 @@ class Board {
     this.#animationFall = 'fall';
     this.#animationScale = 'scale';
 
-    this.#columns = this.createStorage(elementColumns);
-    this.#rows = this.createStorage(elementsRows);
+    this.#columns = this.createStorage(game.columnsAmount);
+    this.#rows = this.createStorage(game.rowsAmount);
   }
 
   setBlocksInteractiveState(flag) {
@@ -89,9 +90,13 @@ class Board {
     }
   }
 
-  //
-  //
-  //
+  get lineInterface() {
+    return this.#progressInterface;
+  }
+
+  get scoreInterface() {
+    return this.#scoreInterface;
+  }
 
   reRenderBlock (block) {
     block.stopAnimation().setAnimation(this.#animationFall).initAnimation().startAnimation();

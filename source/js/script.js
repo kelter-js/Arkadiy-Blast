@@ -24,121 +24,62 @@ document.body.appendChild(app.view);
 
 const game = new Game();
 
-const score = new Score(
-  Constants.score.start,
-  Constants.score.modifier,
-  Constants.score.textX,
-  Constants.score.textY
-);
+const restartButton = new Frame(Constants.restartButton);
+
+const restartText = new Text(Constants.restartText);
+
+const score = new Score(Constants.scoreText);
 
 const progressLine = new ProgressLine(
-  Constants.progressLine.x,
-  Constants.progressLine.y,
-  Constants.progressLine.maxWidth,
-  Constants.progressLine.height,
-  Constants.progressLine.path,
+  Constants.progressLine,
   Constants.game.winScore
 );
 
+const pauseButton = new PauseButton(Constants.pauseButton);
+
 const endGame = new EndGame(
-  Constants.endGameFrame.x,
-  Constants.endGameFrame.y,
-  Constants.endGameFrame.width,
-  Constants.endGameFrame.height,
-  Constants.endGameFrame.path,
-  Constants.game.winScore,
-  Constants.game.maxActions
+  Constants.endGameFrame,
+  Constants.game,
+  Constants.time,
+  Constants.timeText,
+  Constants.finalScore,
+  Constants.finatlScoreText,
+  restartButton,
+  restartText
 );
 
-const actionsLeft = new Text(
-  Constants.actionsLeft.x,
-  Constants.actionsLeft.y,
-  endGame.actionsLeft
-);
+const actionsLeft = new Text(Constants.actionsLeftText, endGame.actionsLeft);
+
+const actionText = new Text(Constants.actionText);
 
 const generatedBoard = new Board(
-  Constants.block.padding,
-  Constants.block.moveIndex,
-  Constants.game.columnsAmount,
-  Constants.game.rowsAmount,
-  Constants.board.x,
-  Constants.board.y,
-  Constants.block.colors,
-  Constants.block.width,
-  Constants.block.height,
-  Constants.block.anchorPoint,
-  Constants.game.minElementsDestroy,
+  Constants.block,
+  Constants.game,
+  Constants.board,
   score,
   progressLine,
   endGame,
   actionsLeft
 );
 
-const gameBoard = new Frame(
-  Constants.board.x,
-  Constants.board.y,
-  Constants.board.width,
-  Constants.board.height,
-  Constants.board.path
-);
+const gameBoard = new Frame(Constants.board);
 
-const scoreFrame = new Frame(
-  Constants.score.x,
-  Constants.score.y,
-  Constants.score.width,
-  Constants.score.height,
-  Constants.score.path
-);
+const scoreFrame = new Frame(Constants.score);
 
-const maxScoreFrame = new Frame(
-  Constants.maxScore.x,
-  Constants.maxScore.y,
-  Constants.maxScore.width,
-  Constants.maxScore.height,
-  Constants.maxScore.path
-);
+const maxScoreFrame = new Frame(Constants.maxScore);
 
 const maxScore = new Text(
-  Constants.maxScore.textX,
-  Constants.maxScore.textY,
+  Constants.maxScoreText,
   Constants.game.winScore
 );
 
-const actionsFrame = new Frame(
-  Constants.actions.x,
-  Constants.actions.y,
-  Constants.actions.width,
-  Constants.actions.height,
-  Constants.actions.path
-);
+const actionsFrame = new Frame(Constants.actions);
 
-const pauseButton = new PauseButton(
-  Constants.pause.x,
-  Constants.pause.y,
-  Constants.pause.buttonWidth,
-  Constants.pause.buttonHeight,
-  Constants.pause.buttonPath,
-);
+const progressBarFrame = new Frame(Constants.progressBar);
 
-const progressBarFrame = new Frame(
-  Constants.progressBar.x,
-  Constants.progressBar.y,
-  Constants.progressBar.width,
-  Constants.progressBar.height,
-  Constants.progressBar.path
-);
+const currentScoreText = new Text(Constants.currentScore);
 
-const currentScoreText = new Text(
-  Constants.currentScore.x,
-  Constants.currentScore.y,
-  Constants.currentScore.text
-);
-
-const winScoreText = new Text(
-  Constants.winScore.x,
-  Constants.winScore.y,
-  Constants.winScore.text
-);
+const winScoreText = new Text(Constants.winScore);
 
 const setup = () => {
   return () => {
@@ -150,6 +91,7 @@ const setup = () => {
     progressLine.setTextures();
     endGame.setTextures();
     actionsFrame.setTextures();
+    restartButton.setTextures();
 
     app.stage.addChild(gameBoard);
     app.stage.addChild(scoreFrame);
@@ -163,6 +105,7 @@ const setup = () => {
     app.stage.addChild(winScoreText);
     app.stage.addChild(actionsFrame);
     app.stage.addChild(actionsLeft);
+    app.stage.addChild(actionText);
     generatedBoard.fillBlockStorage();
     game.play();
   }
@@ -176,7 +119,7 @@ app.loader
     Constants.block.colors[4],
     Constants.score.path,
     Constants.maxScore.path,
-    Constants.pause.buttonPath,
+    Constants.pauseButton.path,
     Constants.progressBar.path,
     Constants.progressLine.path,
     Constants.endGameFrame.path,

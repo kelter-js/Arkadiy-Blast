@@ -4,11 +4,11 @@ class Text extends PIXI.Text {
   #x;
   #y;
 
-  constructor(x, y, text, textStyle = Constants.score.textStyle) {
+  constructor(options, text, textStyle = Constants.scoreText.textStyle) {
     super();
-    this.#x = x;
-    this.#y = y;
-    this.text = text;
+    this.#x = options.x;
+    this.#y = options.y;
+    this.text = text || options.text;
     this.style = textStyle;
     this.zOrder = 1;
     this.setTextPosition();

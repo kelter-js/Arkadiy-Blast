@@ -1,12 +1,13 @@
 import { Frame } from './frame.js'
 import { game } from './script.js'
+import { Constants } from './constants.js'
 
 class PauseButton extends Frame {
   #increasedSize;
   #isOnPause;
 
-  constructor(x, y, width, height, texture) {
-    super(x, y, width, height, texture);
+  constructor(pause) {
+    super(pause);
     this.#increasedSize = 10;
     this.interactive = true;
     this.on('mouseover', this.onMouseOver);
@@ -29,13 +30,17 @@ class PauseButton extends Frame {
   }
 
   onMouseDownButton() {
+    if (game.getCurrentState() === 'over' || game.getCurrentState() === 'win') {
+      return;
+    }
+
     if (this.#isOnPause) {
       this.#isOnPause = false;
-      game.changeState(0);
+      game.changeState(Constants.game.startState);
       return;
     }
     this.#isOnPause = true;
-    game.changeState(1);
+    game.changeState(Constants.game.pauseState);
   }
 }
 
