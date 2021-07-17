@@ -14,7 +14,7 @@ class Score extends Text {
 
   increaseCounter(value) {
     this.#count += value * this.#modifier;
-    this.text = String(this.#count);
+    this.text = this.#count;
   }
 
   get currentScore() {

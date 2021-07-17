@@ -3,11 +3,11 @@ import { Constants } from './constants.js'
 class Animation {
   static fallAnimation(delta, block) {
     let endCoordinate = (
-      Constants.boardCoordinateY + block.row * (Constants.blockWidth + Constants.spaceBetweenBlock) +
-      Constants.blockPadding + Constants.blockWidth * Constants.blockAnchorPoint
+      Constants.board.y + block.row * (Constants.block.width + Constants.block.spaceBetween) +
+      Constants.block.padding + Constants.block.width * Constants.block.anchorPoint
     );
-    block.width = Constants.blockWidth;
-    block.height = Constants.blockHeight;
+    block.width = Constants.block.width;
+    block.height = Constants.block.height;
     if (block.y <= endCoordinate) {
       block.y += 5 * delta;
     } else {
@@ -17,12 +17,12 @@ class Animation {
   }
 
   static scaleAnimation (delta, block) {
-    if (block.width <= Constants.blockWidth) {
+    if (block.width <= Constants.block.width) {
       block.width += 2 * delta;
       block.height += 2 * delta;
     } else {
-      block.width = Constants.blockWidth;
-      block.height = Constants.blockHeight;
+      block.width = Constants.block.width;
+      block.height = Constants.block.height;
       block.stopAnimation();
     }
   }

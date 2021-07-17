@@ -48,7 +48,7 @@ class PauseState extends State {
 
   constructor() {
     super('pause');
-    this.#pause = new Text(Constants.pauseTextX, Constants.pauseTextY, Constants.pauseText, Constants.pauseTextStyle);
+    this.#pause = new Text(Constants.pause.textX, Constants.pause.textY, Constants.pause.text, Constants.pause.textStyle);
   }
 
   setElementsNonInteractive() {

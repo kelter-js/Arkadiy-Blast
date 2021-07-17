@@ -14,9 +14,9 @@ if(!PIXI.utils.isWebGLSupported()){
 }
 
 let app = new PIXI.Application({
-  width: Constants.minWidth,
-  height: Constants.minHeight,
-  backgroundColor: Constants.bgColor,
+  width: Constants.game.minWidth,
+  height: Constants.game.minHeight,
+  backgroundColor: Constants.game.bgColor,
 });
 
 document.body.appendChild(app.view);
@@ -24,81 +24,81 @@ document.body.appendChild(app.view);
 const game = new Game();
 
 const score = new Score(
-  Constants.scoreStart,
-  Constants.scoreModifier,
-  Constants.scoreTextPositionX,
-  Constants.scoreTextPositionY
+  Constants.score.start,
+  Constants.score.modifier,
+  Constants.score.textX,
+  Constants.score.textY
 );
 
 const progressLine = new ProgressLine(
-  Constants.progressLineX,
-  Constants.progressLineY,
-  Constants.progressLineMaxWidth,
-  Constants.progressLineHeight,
-  Constants.progressLinePath,
-  Constants.maxScore
+  Constants.progressLine.x,
+  Constants.progressLine.y,
+  Constants.progressLine.maxWidth,
+  Constants.progressLine.height,
+  Constants.progressLine.path,
+  Constants.game.winScore
 );
 
 const generatedBoard = new Board(
-  Constants.blockPadding,
-  Constants.blockMoveIndex,
-  Constants.columnsAmount,
-  Constants.rowsAmount,
-  Constants.boardCoordinateX,
-  Constants.boardCoordinateY,
-  Constants.blockColors,
-  Constants.blockWidth,
-  Constants.blockHeight,
-  Constants.blockAnchorPoint,
-  Constants.minElementsDestroy,
+  Constants.block.padding,
+  Constants.block.moveIndex,
+  Constants.game.columnsAmount,
+  Constants.game.rowsAmount,
+  Constants.board.x,
+  Constants.board.y,
+  Constants.block.colors,
+  Constants.block.width,
+  Constants.block.height,
+  Constants.block.anchorPoint,
+  Constants.game.minElementsDestroy,
   score,
   progressLine
 );
 
 const gameBoard = new Frame(
-  Constants.boardCoordinateX,
-  Constants.boardCoordinateY,
-  Constants.boardWidth,
-  Constants.boardHeight,
-  Constants.boardPath
+  Constants.board.x,
+  Constants.board.y,
+  Constants.board.width,
+  Constants.board.height,
+  Constants.board.path
 );
 
 const scoreFrame = new Frame(
-  Constants.scoreX,
-  Constants.scoreY,
-  Constants.scoreWidth,
-  Constants.scoreHeight,
-  Constants.scorePath
+  Constants.score.x,
+  Constants.score.y,
+  Constants.score.width,
+  Constants.score.height,
+  Constants.score.path
 );
 
 const maxScoreFrame = new Frame(
-  Constants.maxScoreX,
-  Constants.maxScoreY,
-  Constants.maxScoreWidth,
-  Constants.maxScoreHeight,
-  Constants.maxScorePath
+  Constants.maxScore.x,
+  Constants.maxScore.y,
+  Constants.maxScore.width,
+  Constants.maxScore.height,
+  Constants.maxScore.path
 );
 
 const maxScore = new Text(
-  Constants.maxScoreTextX,
-  Constants.maxScoreTextY,
-  Constants.maxScore
+  Constants.maxScore.textX,
+  Constants.maxScore.textY,
+  Constants.game.winScore
 );
 
 const pauseButton = new PauseButton(
-  Constants.pauseButtonX,
-  Constants.pauseButtonY,
-  Constants.pauseButtonWidth,
-  Constants.pauseButtonHeight,
-  Constants.pauseButtonPath,
+  Constants.pause.x,
+  Constants.pause.y,
+  Constants.pause.buttonWidth,
+  Constants.pause.buttonHeight,
+  Constants.pause.buttonPath,
 );
 
 const progressBarFrame = new Frame(
-  Constants.progressBarX,
-  Constants.progressBarY,
-  Constants.progressBarWidth,
-  Constants.progressBarHeight,
-  Constants.progressBarPath
+  Constants.progressBar.x,
+  Constants.progressBar.y,
+  Constants.progressBar.width,
+  Constants.progressBar.height,
+  Constants.progressBar.path
 );
 
 const setup = () => {
@@ -124,17 +124,17 @@ const setup = () => {
 }
 
 app.loader
-  .add([Constants.blockColors[0],
-    Constants.blockColors[1],
-    Constants.blockColors[2],
-    Constants.blockColors[3],
-    Constants.blockColors[4],
-    Constants.scorePath,
-    Constants.maxScorePath,
-    Constants.pauseButtonPath,
-    Constants.progressBarPath,
-    Constants.progressLinePath,
-    Constants.boardPath])
+  .add([Constants.block.colors[0],
+    Constants.block.colors[1],
+    Constants.block.colors[2],
+    Constants.block.colors[3],
+    Constants.block.colors[4],
+    Constants.score.path,
+    Constants.maxScore.path,
+    Constants.pause.buttonPath,
+    Constants.progressBar.path,
+    Constants.progressLine.path,
+    Constants.board.path])
   .load(setup());
 
 export {

@@ -4,7 +4,7 @@ class Text extends PIXI.Text {
   #x;
   #y;
 
-  constructor(x, y, text, textStyle = Constants.scoreTextStyle) {
+  constructor(x, y, text, textStyle = Constants.score.textStyle) {
     super();
     this.#x = x;
     this.#y = y;

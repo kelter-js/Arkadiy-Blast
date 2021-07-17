@@ -18,7 +18,7 @@ class Block extends PIXI.Sprite {
     this.column = options.column;
     this.interactive = true;
     this.#type = options.blockType;
-    this.anchor.set(Constants.blockAnchorPoint);
+    this.anchor.set(Constants.block.anchorPoint);
 
     this.#animations = {
       'fall': Animation.fallAnimation,
@@ -27,8 +27,8 @@ class Block extends PIXI.Sprite {
 
     this.#currentAnimation = 'fall';
 
-    this.width = Constants.blockWidth;
-    this.height = Constants.blockHeight;
+    this.width = Constants.block.width;
+    this.height = Constants.block.height;
 
     this.initAnimation();
   }
