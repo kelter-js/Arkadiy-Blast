@@ -17,6 +17,10 @@ class Text extends PIXI.Text {
   setTextPosition() {
     this.position.set(this.#x, this.#y);
   }
+
+  changeCurrenttext(value) {
+    this.text = value;
+  }
 }
 
 export { Text }

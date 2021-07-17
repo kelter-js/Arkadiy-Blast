@@ -91,13 +91,27 @@ const SCORE = {
 }
 
 const MAX_SCORE = {
-  'path': './../img/icons/money.png',
+  'path': './../img/icons/placeholder-purple.png',
   'width': Utils.getPercentage(GAME_SETTINGS.minWidth, 14.1),
   'height': Utils.getPercentage(GAME_SETTINGS.minHeight, 6.5),
   'y': Utils.getPercentage(GAME_SETTINGS.minHeight, 12),
   get x () {
     return Utils.getPercentage(GAME_SETTINGS.minWidth, 83) - (this.width / 2);
   },
+  get textY () {
+    return this.y + Utils.getPercentage(this.y, 10);
+  },
+  get textX () {
+    return this.x + Utils.getPercentage(this.y, 50);
+  },
+}
+
+const ACTIONS = {
+  'path': './../img/icons/placeholder-purple.png',
+  'width': Utils.getPercentage(GAME_SETTINGS.minWidth, 14.1),
+  'height': Utils.getPercentage(GAME_SETTINGS.minHeight, 6.5),
+  'y': Utils.getPercentage(GAME_SETTINGS.minHeight, 25),
+  'x': MAX_SCORE.x,
   get textY () {
     return this.y + Utils.getPercentage(this.y, 10);
   },
@@ -116,6 +130,24 @@ const WIN_SCORE = {
   'y': Utils.getPercentage(MAX_SCORE.y, 65),
   'x': Utils.getPercentage(MAX_SCORE.x, 103),
   'text': 'Победа',
+}
+
+const ACTIONS_LEFT = {
+  'y': Utils.getPercentage(ACTIONS.y, 105),
+  'x': Utils.getPercentage(ACTIONS.x, 108),
+  'text': 'Осталось ходов',
+}
+
+const END_GAME_FRAME = {
+  'path': './../img/icons/panel-score.png',
+  'width': Utils.getPercentage(GAME_SETTINGS.minWidth, 31.8),
+  'height': Utils.getPercentage(GAME_SETTINGS.minHeight, 46.8),
+  get y () {
+    return Utils.getCenterCoordinates(GAME_SETTINGS.minHeight, this.height);
+  },
+  get x () {
+    return Utils.getCenterCoordinates(GAME_SETTINGS.minWidth, this.width);
+  },
 }
 
 const PAUSE = {
@@ -159,6 +191,10 @@ class Constants {
     return MAX_SCORE;
   }
 
+  static get actionsLeft() {
+    return ACTIONS_LEFT;
+  }
+
   static get pause() {
     return PAUSE;
   }
@@ -185,6 +221,14 @@ class Constants {
 
   static get score() {
     return SCORE;
+  }
+
+  static get endGameFrame() {
+    return END_GAME_FRAME;
+  }
+
+  static get actions() {
+    return ACTIONS;
   }
 }
 

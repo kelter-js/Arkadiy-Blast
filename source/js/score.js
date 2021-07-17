@@ -9,7 +9,6 @@ class Score extends Text {
     this.#count = startAmount;
     this.#modifier = modifier;
     this.text = this.#count;
-    this.zOrder = 1;
   }
 
   increaseCounter(value) {

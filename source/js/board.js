@@ -21,9 +21,11 @@ class Board {
   #minDestroyAmount;
   #scoreInterface;
   #progressInterface;
+  #endGameInterface;
+  #actionsInterface;
   colorTypes;
 
-  constructor (blockPadding, blockMoveIndex, elementColumns, elementsRows, boardX, boardY, colorStorage, blockWidth, blockHeight, anchorPoint, minDestroyElements, score, progressLine) {
+  constructor (blockPadding, blockMoveIndex, elementColumns, elementsRows, boardX, boardY, colorStorage, blockWidth, blockHeight, anchorPoint, minDestroyElements, score, progressLine, endGame, actionCounter) {
     this.#blockMoveIndex = blockMoveIndex;
     this.#blockPadding = blockPadding;
     this.#boardX = boardX;
@@ -37,8 +39,11 @@ class Board {
     this.#startCoordinateY = this.#blockStartY;
     this.colorTypes = colorStorage;
     this.#minDestroyAmount = minDestroyElements;
+    this.#actionsInterface = actionCounter;
+
     this.#scoreInterface = score;
     this.#progressInterface = progressLine;
+    this.#endGameInterface = endGame;
 
     this.#animationFall = 'fall';
     this.#animationScale = 'scale';
@@ -158,6 +163,8 @@ class Board {
       this.#scoreInterface.increaseCounter(hittedBlocks.length);
       this.#progressInterface.increaseWidth(this.#scoreInterface.currentScore);
       this.reFillBoard(this.#rows);
+      this.#endGameInterface.increaseActions(this.#scoreInterface.currentScore);
+      this.#actionsInterface.changeCurrenttext(this.#endGameInterface.actionsLeft);
     }
   }
 

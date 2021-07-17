@@ -2,6 +2,7 @@ import { Board } from './board.js'
 import { Constants } from './constants.js'
 import { Frame } from './frame.js'
 import { Score } from './score.js'
+import { EndGame } from './end-game.js'
 import { Text } from './text.js'
 import { PauseButton } from './pause.js'
 import { Game } from './game.js'
@@ -39,6 +40,22 @@ const progressLine = new ProgressLine(
   Constants.game.winScore
 );
 
+const endGame = new EndGame(
+  Constants.endGameFrame.x,
+  Constants.endGameFrame.y,
+  Constants.endGameFrame.width,
+  Constants.endGameFrame.height,
+  Constants.endGameFrame.path,
+  Constants.game.winScore,
+  Constants.game.maxActions
+);
+
+const actionsLeft = new Text(
+  Constants.actionsLeft.x,
+  Constants.actionsLeft.y,
+  endGame.actionsLeft
+);
+
 const generatedBoard = new Board(
   Constants.block.padding,
   Constants.block.moveIndex,
@@ -52,7 +69,9 @@ const generatedBoard = new Board(
   Constants.block.anchorPoint,
   Constants.game.minElementsDestroy,
   score,
-  progressLine
+  progressLine,
+  endGame,
+  actionsLeft
 );
 
 const gameBoard = new Frame(
@@ -83,6 +102,14 @@ const maxScore = new Text(
   Constants.maxScore.textX,
   Constants.maxScore.textY,
   Constants.game.winScore
+);
+
+const actionsFrame = new Frame(
+  Constants.actions.x,
+  Constants.actions.y,
+  Constants.actions.width,
+  Constants.actions.height,
+  Constants.actions.path
 );
 
 const pauseButton = new PauseButton(
@@ -121,6 +148,8 @@ const setup = () => {
     pauseButton.setTextures();
     progressBarFrame.setTextures();
     progressLine.setTextures();
+    endGame.setTextures();
+    actionsFrame.setTextures();
 
     app.stage.addChild(gameBoard);
     app.stage.addChild(scoreFrame);
@@ -132,6 +161,8 @@ const setup = () => {
     app.stage.addChild(progressLine);
     app.stage.addChild(currentScoreText);
     app.stage.addChild(winScoreText);
+    app.stage.addChild(actionsFrame);
+    app.stage.addChild(actionsLeft);
     generatedBoard.fillBlockStorage();
     game.play();
   }
@@ -148,11 +179,13 @@ app.loader
     Constants.pause.buttonPath,
     Constants.progressBar.path,
     Constants.progressLine.path,
+    Constants.endGameFrame.path,
     Constants.board.path])
   .load(setup());
 
 export {
   app,
   generatedBoard,
+  endGame,
   game,
 }
