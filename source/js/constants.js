@@ -112,6 +112,12 @@ const CURRENT_SCORE = {
   'text': 'Текущие очки',
 }
 
+const WIN_SCORE = {
+  'y': Utils.getPercentage(MAX_SCORE.y, 65),
+  'x': Utils.getPercentage(MAX_SCORE.x, 103),
+  'text': 'Победа',
+}
+
 const PAUSE = {
   'textStyle': new PIXI.TextStyle({
     fontFamily: 'Marvin-Shadow',
@@ -171,6 +177,10 @@ class Constants {
 
   static get currentScore() {
     return CURRENT_SCORE;
+  }
+
+  static get winScore() {
+    return WIN_SCORE;
   }
 
   static get score() {

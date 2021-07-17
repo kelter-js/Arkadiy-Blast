@@ -101,10 +101,16 @@ const progressBarFrame = new Frame(
   Constants.progressBar.path
 );
 
-const currentScore = new Text(
+const currentScoreText = new Text(
   Constants.currentScore.x,
   Constants.currentScore.y,
   Constants.currentScore.text
+);
+
+const winScoreText = new Text(
+  Constants.winScore.x,
+  Constants.winScore.y,
+  Constants.winScore.text
 );
 
 const setup = () => {
@@ -124,7 +130,8 @@ const setup = () => {
     app.stage.addChild(pauseButton);
     app.stage.addChild(progressBarFrame);
     app.stage.addChild(progressLine);
-    app.stage.addChild(currentScore);
+    app.stage.addChild(currentScoreText);
+    app.stage.addChild(winScoreText);
     generatedBoard.fillBlockStorage();
     game.play();
   }
