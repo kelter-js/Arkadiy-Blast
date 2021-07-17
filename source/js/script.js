@@ -101,6 +101,12 @@ const progressBarFrame = new Frame(
   Constants.progressBar.path
 );
 
+const currentScore = new Text(
+  Constants.currentScore.x,
+  Constants.currentScore.y,
+  Constants.currentScore.text
+);
+
 const setup = () => {
   return () => {
     gameBoard.setTextures();
@@ -118,6 +124,7 @@ const setup = () => {
     app.stage.addChild(pauseButton);
     app.stage.addChild(progressBarFrame);
     app.stage.addChild(progressLine);
+    app.stage.addChild(currentScore);
     generatedBoard.fillBlockStorage();
     game.play();
   }
