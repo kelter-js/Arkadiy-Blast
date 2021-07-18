@@ -23,8 +23,6 @@
   },
   "scripts": {
     "editorconfig": "editorconfig-cli",
-    "stylelint": "stylelint \"source/sass/**/*.sass\" --syntax sass",
-    "test": "npm run editorconfig && npm run stylelint",
     "build": "gulp build",
     "start": "gulp"
   },
@@ -32,14 +30,6 @@
     "last 2 versions",
     "not dead",
     "not ie <= 11"
-  ],
-  "editorconfig-cli": [
-    "*.json",
-    "*.js",
-    "source/*.html",
-    "source/js/**/*.js",
-    "source/img/**/*.svg",
-    "source/sass/**/*.sass"
   ],
   "engines": {
     "node": "14.15.0"

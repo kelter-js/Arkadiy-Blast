@@ -1471,7 +1471,6 @@ class EndGame extends __WEBPACK_IMPORTED_MODULE_0__frame_js__["a" /* Frame */] {
     const time = new __WEBPACK_IMPORTED_MODULE_2__text_js__["a" /* Text */](_classPrivateFieldGet(this, _time), _classPrivateFieldGet(this, _timeCounter), _classPrivateFieldGet(this, _time).textStyle);
     const scoreText = new __WEBPACK_IMPORTED_MODULE_2__text_js__["a" /* Text */](_classPrivateFieldGet(this, _scoreText));
     const score = new __WEBPACK_IMPORTED_MODULE_2__text_js__["a" /* Text */](_classPrivateFieldGet(this, _score), _classPrivateFieldGet(this, _currentScore));
-    time.anchor.x = -.1;
 
     _classPrivateFieldGet(this, _endGameElements).push(timeText, time, scoreText, score, this, _classPrivateFieldGet(this, _restartButtonInterface), _classPrivateFieldGet(this, _restartText));
 
