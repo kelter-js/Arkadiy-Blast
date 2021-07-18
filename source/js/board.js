@@ -23,6 +23,9 @@ class Board {
   #progressInterface;
   #endGameInterface;
   #actionsInterface;
+  #isPlayable;
+  #minimalRows;
+  #minimalColumn;
   colorTypes;
 
 
@@ -40,7 +43,11 @@ class Board {
     this.#startCoordinateY = this.#blockStartY;
     this.colorTypes = block.colors;
     this.#minDestroyAmount = game.minElementsDestroy;
+    this.#minimalColumn = game.columnsAmount;
+    this.#minimalRows = game.rowsAmount;
+
     this.#actionsInterface = actionCounter;
+    this.#isPlayable = false;
 
     this.#scoreInterface = score;
     this.#progressInterface = progressLine;
@@ -49,8 +56,7 @@ class Board {
     this.#animationFall = 'fall';
     this.#animationScale = 'scale';
 
-    this.#columns = this.createStorage(game.columnsAmount);
-    this.#rows = this.createStorage(game.rowsAmount);
+    this.reCreateStorages();
   }
 
   setBlocksInteractiveState(flag) {
@@ -67,6 +73,11 @@ class Board {
 
   createStorage (elementsAmount) {
     return new Array(elementsAmount).fill('');
+  }
+
+  reCreateStorages() {
+    this.#columns = this.createStorage(this.#minimalColumn);
+    this.#rows = this.createStorage(this.#minimalRows);
   }
 
   getCoordinate (startPoistion, blockPadding, positionIndex, distance, elementSize, anchorPoint) {
@@ -117,6 +128,26 @@ class Board {
     });
   }
 
+  checkSameType(row, column, type) {
+    if (this.#rows[row] && this.#rows[row][column]) {
+      if (this.#rows[row][column].type === type) {
+        this.#isPlayable = true;
+      }
+    }
+  }
+
+  checkAllColors() {
+    this.#rows.map((row, rowIndex) => {
+      row.map((column, columnIndex) => {
+        if (this.#isPlayable) return;
+        this.checkSameType(rowIndex + 1, columnIndex, column.type);
+        this.checkSameType(rowIndex - 1, columnIndex, column.type);
+        this.checkSameType(rowIndex, columnIndex + 1, column.type);
+        this.checkSameType(rowIndex, columnIndex - 1, column.type);
+      })
+    })
+  }
+
   onBlockHit (hittedBlocks, blockRow, blockColumn, type) {
     if (this.#rows[blockRow] && this.#rows[blockRow][blockColumn]) {
       const currentBlock = this.#rows[blockRow][blockColumn];
@@ -157,6 +188,14 @@ class Board {
     })
   }
 
+  clearBoard() {
+    this.#rows.map((row) => {
+      row.map((column) => {
+        app.stage.removeChild(column);
+      })
+    })
+  }
+
   blockOnMouseDown () {
     return (eventData) => {
       const target = eventData.target;
@@ -168,6 +207,13 @@ class Board {
       this.#scoreInterface.increaseCounter(hittedBlocks.length);
       this.#progressInterface.increaseWidth(this.#scoreInterface.currentScore);
       this.reFillBoard(this.#rows);
+      this.checkAllColors();
+      if (!this.#isPlayable) {
+        this.clearBoard();
+        this.reCreateStorages();
+        this.fillBlockStorage();
+      }
+      this.#isPlayable = false;
       this.#endGameInterface.increaseActions(this.#scoreInterface.currentScore);
       this.#actionsInterface.changeCurrenttext(this.#endGameInterface.actionsLeft);
     }
@@ -201,6 +247,17 @@ class Board {
       this.#startCoordinateY += this.#blockMoveIndex;
       return this.#columns;
     });
+    this.#startCoordinateX = this.#blockStartX;
+    this.#startCoordinateY = this.#blockStartY;
+
+    this.checkAllColors();
+    if (!this.#isPlayable) {
+      this.clearBoard();
+      this.reCreateStorages();
+      this.fillBlockStorage();
+    }
+
+    this.#isPlayable = false;
   }
 }
 

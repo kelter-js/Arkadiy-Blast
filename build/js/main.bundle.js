@@ -75,8 +75,8 @@ const GAME_SETTINGS = {
   'bgColor': 0xa1a1a1,
   'minWidth': 1187,
   'minHeight': 878,
-  'columnsAmount': 4,
-  'rowsAmount': 3,
+  'columnsAmount': 9,
+  'rowsAmount': 7,
   'minElementsDestroy': 2,
   'maxActions': 15,
   'winScore': 500,
@@ -729,6 +729,12 @@ var _endGameInterface = /*#__PURE__*/new WeakMap();
 
 var _actionsInterface = /*#__PURE__*/new WeakMap();
 
+var _isPlayable = /*#__PURE__*/new WeakMap();
+
+var _minimalRows = /*#__PURE__*/new WeakMap();
+
+var _minimalColumn = /*#__PURE__*/new WeakMap();
+
 class Board {
   constructor(block, game, board, score, progressLine, endGame, actionCounter) {
     _columns.set(this, {
@@ -831,6 +837,21 @@ class Board {
       value: void 0
     });
 
+    _isPlayable.set(this, {
+      writable: true,
+      value: void 0
+    });
+
+    _minimalRows.set(this, {
+      writable: true,
+      value: void 0
+    });
+
+    _minimalColumn.set(this, {
+      writable: true,
+      value: void 0
+    });
+
     _defineProperty(this, "colorTypes", void 0);
 
     _classPrivateFieldSet(this, _blockMoveIndex, block.moveIndex);
@@ -859,7 +880,13 @@ class Board {
 
     _classPrivateFieldSet(this, _minDestroyAmount, game.minElementsDestroy);
 
+    _classPrivateFieldSet(this, _minimalColumn, game.columnsAmount);
+
+    _classPrivateFieldSet(this, _minimalRows, game.rowsAmount);
+
     _classPrivateFieldSet(this, _actionsInterface, actionCounter);
+
+    _classPrivateFieldSet(this, _isPlayable, false);
 
     _classPrivateFieldSet(this, _scoreInterface, score);
 
@@ -871,9 +898,7 @@ class Board {
 
     _classPrivateFieldSet(this, _animationScale, 'scale');
 
-    _classPrivateFieldSet(this, _columns, this.createStorage(game.columnsAmount));
-
-    _classPrivateFieldSet(this, _rows, this.createStorage(game.rowsAmount));
+    this.reCreateStorages();
   }
 
   setBlocksInteractiveState(flag) {
@@ -890,6 +915,12 @@ class Board {
 
   createStorage(elementsAmount) {
     return new Array(elementsAmount).fill('');
+  }
+
+  reCreateStorages() {
+    _classPrivateFieldSet(this, _columns, this.createStorage(_classPrivateFieldGet(this, _minimalColumn)));
+
+    _classPrivateFieldSet(this, _rows, this.createStorage(_classPrivateFieldGet(this, _minimalRows)));
   }
 
   getCoordinate(startPoistion, blockPadding, positionIndex, distance, elementSize, anchorPoint) {
@@ -940,6 +971,26 @@ class Board {
     });
   }
 
+  checkSameType(row, column, type) {
+    if (_classPrivateFieldGet(this, _rows)[row] && _classPrivateFieldGet(this, _rows)[row][column]) {
+      if (_classPrivateFieldGet(this, _rows)[row][column].type === type) {
+        _classPrivateFieldSet(this, _isPlayable, true);
+      }
+    }
+  }
+
+  checkAllColors() {
+    _classPrivateFieldGet(this, _rows).map((row, rowIndex) => {
+      row.map((column, columnIndex) => {
+        if (_classPrivateFieldGet(this, _isPlayable)) return;
+        this.checkSameType(rowIndex + 1, columnIndex, column.type);
+        this.checkSameType(rowIndex - 1, columnIndex, column.type);
+        this.checkSameType(rowIndex, columnIndex + 1, column.type);
+        this.checkSameType(rowIndex, columnIndex - 1, column.type);
+      });
+    });
+  }
+
   onBlockHit(hittedBlocks, blockRow, blockColumn, type) {
     if (_classPrivateFieldGet(this, _rows)[blockRow] && _classPrivateFieldGet(this, _rows)[blockRow][blockColumn]) {
       const currentBlock = _classPrivateFieldGet(this, _rows)[blockRow][blockColumn];
@@ -982,6 +1033,14 @@ class Board {
     });
   }
 
+  clearBoard() {
+    _classPrivateFieldGet(this, _rows).map(row => {
+      row.map(column => {
+        __WEBPACK_IMPORTED_MODULE_1__script_js__["a" /* app */].stage.removeChild(column);
+      });
+    });
+  }
+
   blockOnMouseDown() {
     return eventData => {
       const target = eventData.target;
@@ -996,6 +1055,15 @@ class Board {
       _classPrivateFieldGet(this, _progressInterface).increaseWidth(_classPrivateFieldGet(this, _scoreInterface).currentScore);
 
       this.reFillBoard(_classPrivateFieldGet(this, _rows));
+      this.checkAllColors();
+
+      if (!_classPrivateFieldGet(this, _isPlayable)) {
+        this.clearBoard();
+        this.reCreateStorages();
+        this.fillBlockStorage();
+      }
+
+      _classPrivateFieldSet(this, _isPlayable, false);
 
       _classPrivateFieldGet(this, _endGameInterface).increaseActions(_classPrivateFieldGet(this, _scoreInterface).currentScore);
 
@@ -1030,6 +1098,20 @@ class Board {
 
       return _classPrivateFieldGet(this, _columns);
     }));
+
+    _classPrivateFieldSet(this, _startCoordinateX, _classPrivateFieldGet(this, _blockStartX));
+
+    _classPrivateFieldSet(this, _startCoordinateY, _classPrivateFieldGet(this, _blockStartY));
+
+    this.checkAllColors();
+
+    if (!_classPrivateFieldGet(this, _isPlayable)) {
+      this.clearBoard();
+      this.reCreateStorages();
+      this.fillBlockStorage();
+    }
+
+    _classPrivateFieldSet(this, _isPlayable, false);
   }
 
 }
@@ -1389,6 +1471,7 @@ class EndGame extends __WEBPACK_IMPORTED_MODULE_0__frame_js__["a" /* Frame */] {
     const time = new __WEBPACK_IMPORTED_MODULE_2__text_js__["a" /* Text */](_classPrivateFieldGet(this, _time), _classPrivateFieldGet(this, _timeCounter), _classPrivateFieldGet(this, _time).textStyle);
     const scoreText = new __WEBPACK_IMPORTED_MODULE_2__text_js__["a" /* Text */](_classPrivateFieldGet(this, _scoreText));
     const score = new __WEBPACK_IMPORTED_MODULE_2__text_js__["a" /* Text */](_classPrivateFieldGet(this, _score), _classPrivateFieldGet(this, _currentScore));
+    time.anchor.x = -.1;
 
     _classPrivateFieldGet(this, _endGameElements).push(timeText, time, scoreText, score, this, _classPrivateFieldGet(this, _restartButtonInterface), _classPrivateFieldGet(this, _restartText));
 
