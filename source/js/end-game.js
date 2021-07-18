@@ -41,7 +41,7 @@ class EndGame extends Frame {
     this.#restartText = restartText;
 
     this.#restartButtonInterface.interactive = true;
-    this.#restartButtonInterface.on('mousedown', this.createMouseDownHandler());
+    this.#restartButtonInterface.on(Constants.events.click, this.createMouseDownHandler());
 
     this.#endGameElements = [];
 
@@ -54,6 +54,10 @@ class EndGame extends Frame {
 
   get time() {
     return this.#timeCounter;
+  }
+
+  stopCounter() {
+    clearInterval(this.#counterId);
   }
 
   startCounter() {
@@ -97,6 +101,7 @@ class EndGame extends Frame {
       game.changeState(Constants.game.startState);
       generatedBoard.lineInterface.resetLine();
       generatedBoard.scoreInterface.resetScore();
+      generatedBoard.actionsInterface.changeCurrenttext(this.#maxActions);
       this.startCounter();
     }
   }

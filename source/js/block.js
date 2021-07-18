@@ -25,7 +25,7 @@ class Block extends PIXI.Sprite {
       'scale': Animation.scaleAnimation,
     };
 
-    this.#currentAnimation = 'fall';
+    this.#currentAnimation = this.#animations.fall;
 
     this.width = Constants.block.width;
     this.height = Constants.block.height;
@@ -46,6 +46,7 @@ class Block extends PIXI.Sprite {
 
   startAnimation() {
     this.#ticker.start();
+    return this;
   }
 
   stopAnimation() {

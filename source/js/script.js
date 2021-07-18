@@ -30,10 +30,7 @@ const restartText = new Text(Constants.restartText);
 
 const score = new Score(Constants.scoreText);
 
-const progressLine = new ProgressLine(
-  Constants.progressLine,
-  Constants.game.winScore
-);
+const progressLine = new ProgressLine(Constants.progressLine, Constants.game.winScore);
 
 const pauseButton = new PauseButton(Constants.pauseButton);
 
@@ -68,10 +65,7 @@ const scoreFrame = new Frame(Constants.score);
 
 const maxScoreFrame = new Frame(Constants.maxScore);
 
-const maxScore = new Text(
-  Constants.maxScoreText,
-  Constants.game.winScore
-);
+const maxScore = new Text(Constants.maxScoreText, Constants.game.winScore);
 
 const actionsFrame = new Frame(Constants.actions);
 

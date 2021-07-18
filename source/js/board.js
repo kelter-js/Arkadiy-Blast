@@ -1,6 +1,7 @@
-import { Block } from "./block.js"
+import { Block } from './block.js'
 import { app } from './script.js'
 import { Utils } from './utils.js'
+import { Constants } from './constants.js'
 
 class Board {
   #columns;
@@ -26,7 +27,7 @@ class Board {
   #isPlayable;
   #minimalRows;
   #minimalColumn;
-  colorTypes;
+  #colorTypes;
 
 
   constructor (block, game, board, score, progressLine, endGame, actionCounter) {
@@ -41,7 +42,7 @@ class Board {
     this.#blockStartY = this.#boardY + this.#blockPadding + (this.#blockHeight * this.#anchorPoint);
     this.#startCoordinateX = this.#blockStartX;
     this.#startCoordinateY = this.#blockStartY;
-    this.colorTypes = block.colors;
+    this.#colorTypes = block.colors;
     this.#minDestroyAmount = game.minElementsDestroy;
     this.#minimalColumn = game.columnsAmount;
     this.#minimalRows = game.rowsAmount;
@@ -90,7 +91,7 @@ class Board {
     } else {
       const itemType = Utils.randomInteger(0, 4);
       const options = {
-        'texture': this.getTextures(this.colorTypes, itemType),
+        'texture': this.getTextures(this.#colorTypes, itemType),
         'row': row,
         'column': column,
         'x': this.getCoordinate(this.#boardX, this.#blockPadding, column, this.#blockMoveIndex, this.#blockWidth, this.#anchorPoint),
@@ -107,6 +108,10 @@ class Board {
 
   get scoreInterface() {
     return this.#scoreInterface;
+  }
+
+  get actionsInterface() {
+    return this.#actionsInterface;
   }
 
   reRenderBlock (block) {
@@ -180,7 +185,7 @@ class Board {
           createdBlock.width = 0;
           createdBlock.height = 0;
           createdBlock.setAnimation(this.#animationScale).initAnimation().startAnimation();
-          createdBlock.on('mousedown', this.blockOnMouseDown());
+          createdBlock.on(Constants.events.click, this.blockOnMouseDown());
           this.#rows[rowIndex][columnIndex] = createdBlock;
           app.stage.addChild(createdBlock);
         }
@@ -225,7 +230,7 @@ class Board {
         const itemType = Utils.randomInteger(0, 4);
 
         const options = {
-          'texture': this.getTextures(this.colorTypes, itemType),
+          'texture': this.getTextures(this.#colorTypes, itemType),
           'x': this.#startCoordinateX,
           'y': this.#startCoordinateY,
           'row': rowIndex,
@@ -234,15 +239,13 @@ class Board {
         };
 
         columnBlock = this.createBlock(options);
-
-        columnBlock.on('mousedown', this.blockOnMouseDown());
+        columnBlock.on(Constants.events.click, this.blockOnMouseDown());
 
         app.stage.addChild(columnBlock);
 
         this.#startCoordinateX += this.#blockMoveIndex;
         return columnBlock;
       });
-
       this.#startCoordinateX = this.#blockStartX;
       this.#startCoordinateY += this.#blockMoveIndex;
       return this.#columns;
@@ -256,11 +259,8 @@ class Board {
       this.reCreateStorages();
       this.fillBlockStorage();
     }
-
     this.#isPlayable = false;
   }
 }
 
-export {
-  Board
-}
+export { Board }

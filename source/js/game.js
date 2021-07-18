@@ -18,7 +18,6 @@ class Game {
     if (this.#currentState.destroy) {
       this.#currentState.destroy();
     }
-
     this.#currentState = this.#states[index];
     this.play();
   }
@@ -30,7 +29,6 @@ class Game {
   play() {
     this.#currentState.play();
   }
-
 }
 
 class State {

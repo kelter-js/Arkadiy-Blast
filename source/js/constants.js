@@ -117,6 +117,12 @@ const ACTIONS = {
   'x': MAX_SCORE.x,
 }
 
+const EVENT_TYPES = {
+  'click': 'mousedown',
+  'over': 'mouseover',
+  'out': 'mouseout',
+}
+
 const ACTIONS_LEFT_TEXT = {
   'y': Utils.getPercentage(ACTIONS.y, 105),
   'x': Utils.getPercentage(ACTIONS.x, 108),
@@ -164,7 +170,7 @@ const RESTART_TEXT = {
 
 const TIME = {
   'y': Utils.getPercentage(GAME_SETTINGS.minHeight, 38),
-  'x': Utils.getPercentage(GAME_SETTINGS.minWidth, 45.5),
+  'x': Utils.getPercentage(GAME_SETTINGS.minWidth, 46),
   'textStyle': new PIXI.TextStyle({
     fontFamily: 'Marvin-Shadow',
     fontSize: 80,
@@ -330,6 +336,10 @@ class Constants {
 
   static get gameStates() {
     return GAME_STATES;
+  }
+
+  static get events() {
+    return EVENT_TYPES;
   }
 }
 

@@ -183,6 +183,11 @@ const ACTIONS = {
   'y': __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* Utils */].getPercentage(GAME_SETTINGS.minHeight, 25),
   'x': MAX_SCORE.x
 };
+const EVENT_TYPES = {
+  'click': 'mousedown',
+  'over': 'mouseover',
+  'out': 'mouseout'
+};
 const ACTIONS_LEFT_TEXT = {
   'y': __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* Utils */].getPercentage(ACTIONS.y, 105),
   'x': __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* Utils */].getPercentage(ACTIONS.x, 108)
@@ -225,7 +230,7 @@ const RESTART_TEXT = {
 };
 const TIME = {
   'y': __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* Utils */].getPercentage(GAME_SETTINGS.minHeight, 38),
-  'x': __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* Utils */].getPercentage(GAME_SETTINGS.minWidth, 45.5),
+  'x': __WEBPACK_IMPORTED_MODULE_0__utils_js__["a" /* Utils */].getPercentage(GAME_SETTINGS.minWidth, 46),
   'textStyle': new PIXI.TextStyle({
     fontFamily: 'Marvin-Shadow',
     fontSize: 80,
@@ -394,6 +399,10 @@ class Constants {
     return GAME_STATES;
   }
 
+  static get events() {
+    return EVENT_TYPES;
+  }
+
 }
 
 
@@ -404,9 +413,9 @@ class Constants {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return app; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return generatedBoard; });
-/* unused harmony export endGame */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return game; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return generatedBoard; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return endGame; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return game; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__board_js__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__constants_js__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__frame_js__ = __webpack_require__(2);
@@ -673,8 +682,7 @@ class Animation {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__block_js__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__script_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__utils_js__ = __webpack_require__(4);
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__constants_js__ = __webpack_require__(0);
 function _classPrivateFieldGet(receiver, privateMap) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "get"); return _classApplyDescriptorGet(receiver, descriptor); }
 
 function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
@@ -684,6 +692,7 @@ function _classPrivateFieldSet(receiver, privateMap, value) { var descriptor = _
 function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to " + action + " private field on non-instance"); } return privateMap.get(receiver); }
 
 function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } }
+
 
 
 
@@ -734,6 +743,8 @@ var _isPlayable = /*#__PURE__*/new WeakMap();
 var _minimalRows = /*#__PURE__*/new WeakMap();
 
 var _minimalColumn = /*#__PURE__*/new WeakMap();
+
+var _colorTypes = /*#__PURE__*/new WeakMap();
 
 class Board {
   constructor(block, game, board, score, progressLine, endGame, actionCounter) {
@@ -852,7 +863,10 @@ class Board {
       value: void 0
     });
 
-    _defineProperty(this, "colorTypes", void 0);
+    _colorTypes.set(this, {
+      writable: true,
+      value: void 0
+    });
 
     _classPrivateFieldSet(this, _blockMoveIndex, block.moveIndex);
 
@@ -876,7 +890,7 @@ class Board {
 
     _classPrivateFieldSet(this, _startCoordinateY, _classPrivateFieldGet(this, _blockStartY));
 
-    this.colorTypes = block.colors;
+    _classPrivateFieldSet(this, _colorTypes, block.colors);
 
     _classPrivateFieldSet(this, _minDestroyAmount, game.minElementsDestroy);
 
@@ -933,7 +947,7 @@ class Board {
     } else {
       const itemType = __WEBPACK_IMPORTED_MODULE_2__utils_js__["a" /* Utils */].randomInteger(0, 4);
       const options = {
-        'texture': this.getTextures(this.colorTypes, itemType),
+        'texture': this.getTextures(_classPrivateFieldGet(this, _colorTypes), itemType),
         'row': row,
         'column': column,
         'x': this.getCoordinate(_classPrivateFieldGet(this, _boardX), _classPrivateFieldGet(this, _blockPadding), column, _classPrivateFieldGet(this, _blockMoveIndex), _classPrivateFieldGet(this, _blockWidth), _classPrivateFieldGet(this, _anchorPoint)),
@@ -950,6 +964,10 @@ class Board {
 
   get scoreInterface() {
     return _classPrivateFieldGet(this, _scoreInterface);
+  }
+
+  get actionsInterface() {
+    return _classPrivateFieldGet(this, _actionsInterface);
   }
 
   reRenderBlock(block) {
@@ -1025,7 +1043,7 @@ class Board {
           createdBlock.width = 0;
           createdBlock.height = 0;
           createdBlock.setAnimation(_classPrivateFieldGet(this, _animationScale)).initAnimation().startAnimation();
-          createdBlock.on('mousedown', this.blockOnMouseDown());
+          createdBlock.on(__WEBPACK_IMPORTED_MODULE_3__constants_js__["a" /* Constants */].events.click, this.blockOnMouseDown());
           _classPrivateFieldGet(this, _rows)[rowIndex][columnIndex] = createdBlock;
           __WEBPACK_IMPORTED_MODULE_1__script_js__["a" /* app */].stage.addChild(createdBlock);
         }
@@ -1076,7 +1094,7 @@ class Board {
       _classPrivateFieldSet(this, _columns, _classPrivateFieldGet(this, _columns).map((columnBlock, columnIndex) => {
         const itemType = __WEBPACK_IMPORTED_MODULE_2__utils_js__["a" /* Utils */].randomInteger(0, 4);
         const options = {
-          'texture': this.getTextures(this.colorTypes, itemType),
+          'texture': this.getTextures(_classPrivateFieldGet(this, _colorTypes), itemType),
           'x': _classPrivateFieldGet(this, _startCoordinateX),
           'y': _classPrivateFieldGet(this, _startCoordinateY),
           'row': rowIndex,
@@ -1084,7 +1102,7 @@ class Board {
           'blockType': itemType
         };
         columnBlock = this.createBlock(options);
-        columnBlock.on('mousedown', this.blockOnMouseDown());
+        columnBlock.on(__WEBPACK_IMPORTED_MODULE_3__constants_js__["a" /* Constants */].events.click, this.blockOnMouseDown());
         __WEBPACK_IMPORTED_MODULE_1__script_js__["a" /* app */].stage.addChild(columnBlock);
 
         _classPrivateFieldSet(this, _startCoordinateX, _classPrivateFieldGet(this, _startCoordinateX) + _classPrivateFieldGet(this, _blockMoveIndex));
@@ -1193,7 +1211,7 @@ class Block extends PIXI.Sprite {
       'scale': __WEBPACK_IMPORTED_MODULE_1__animation_js__["a" /* Animation */].scaleAnimation
     });
 
-    _classPrivateFieldSet(this, _currentAnimation, 'fall');
+    _classPrivateFieldSet(this, _currentAnimation, _classPrivateFieldGet(this, _animations).fall);
 
     this.width = __WEBPACK_IMPORTED_MODULE_0__constants_js__["a" /* Constants */].block.width;
     this.height = __WEBPACK_IMPORTED_MODULE_0__constants_js__["a" /* Constants */].block.height;
@@ -1216,6 +1234,8 @@ class Block extends PIXI.Sprite {
 
   startAnimation() {
     _classPrivateFieldGet(this, _ticker).start();
+
+    return this;
   }
 
   stopAnimation() {
@@ -1442,7 +1462,7 @@ class EndGame extends __WEBPACK_IMPORTED_MODULE_0__frame_js__["a" /* Frame */] {
 
     _classPrivateFieldGet(this, _restartButtonInterface).interactive = true;
 
-    _classPrivateFieldGet(this, _restartButtonInterface).on('mousedown', this.createMouseDownHandler());
+    _classPrivateFieldGet(this, _restartButtonInterface).on(__WEBPACK_IMPORTED_MODULE_3__constants_js__["a" /* Constants */].events.click, this.createMouseDownHandler());
 
     _classPrivateFieldSet(this, _endGameElements, []);
 
@@ -1455,6 +1475,10 @@ class EndGame extends __WEBPACK_IMPORTED_MODULE_0__frame_js__["a" /* Frame */] {
 
   get time() {
     return _classPrivateFieldGet(this, _timeCounter);
+  }
+
+  stopCounter() {
+    clearInterval(_classPrivateFieldGet(this, _counterId));
   }
 
   startCounter() {
@@ -1475,7 +1499,7 @@ class EndGame extends __WEBPACK_IMPORTED_MODULE_0__frame_js__["a" /* Frame */] {
     _classPrivateFieldGet(this, _endGameElements).push(timeText, time, scoreText, score, this, _classPrivateFieldGet(this, _restartButtonInterface), _classPrivateFieldGet(this, _restartText));
 
     __WEBPACK_IMPORTED_MODULE_1__script_js__["a" /* app */].stage.addChild(this, _classPrivateFieldGet(this, _restartButtonInterface), _classPrivateFieldGet(this, _restartText), timeText, time, scoreText, score);
-    __WEBPACK_IMPORTED_MODULE_1__script_js__["b" /* game */].changeState(__WEBPACK_IMPORTED_MODULE_3__constants_js__["a" /* Constants */].game.loseState);
+    __WEBPACK_IMPORTED_MODULE_1__script_js__["c" /* game */].changeState(__WEBPACK_IMPORTED_MODULE_3__constants_js__["a" /* Constants */].game.loseState);
   }
 
   resetCurrentState() {
@@ -1496,9 +1520,10 @@ class EndGame extends __WEBPACK_IMPORTED_MODULE_0__frame_js__["a" /* Frame */] {
 
       _classPrivateFieldSet(this, _endGameElements, []);
 
-      __WEBPACK_IMPORTED_MODULE_1__script_js__["b" /* game */].changeState(__WEBPACK_IMPORTED_MODULE_3__constants_js__["a" /* Constants */].game.startState);
-      __WEBPACK_IMPORTED_MODULE_1__script_js__["c" /* generatedBoard */].lineInterface.resetLine();
-      __WEBPACK_IMPORTED_MODULE_1__script_js__["c" /* generatedBoard */].scoreInterface.resetScore();
+      __WEBPACK_IMPORTED_MODULE_1__script_js__["c" /* game */].changeState(__WEBPACK_IMPORTED_MODULE_3__constants_js__["a" /* Constants */].game.startState);
+      __WEBPACK_IMPORTED_MODULE_1__script_js__["d" /* generatedBoard */].lineInterface.resetLine();
+      __WEBPACK_IMPORTED_MODULE_1__script_js__["d" /* generatedBoard */].scoreInterface.resetScore();
+      __WEBPACK_IMPORTED_MODULE_1__script_js__["d" /* generatedBoard */].actionsInterface.changeCurrenttext(_classPrivateFieldGet(this, _maxActions));
       this.startCounter();
     };
   }
@@ -1517,7 +1542,7 @@ class EndGame extends __WEBPACK_IMPORTED_MODULE_0__frame_js__["a" /* Frame */] {
     _classPrivateFieldGet(this, _endGameElements).push(_classPrivateFieldGet(this, _restartButtonInterface), _classPrivateFieldGet(this, _restartText));
 
     __WEBPACK_IMPORTED_MODULE_1__script_js__["a" /* app */].stage.addChild(_classPrivateFieldGet(this, _restartButtonInterface), _classPrivateFieldGet(this, _restartText));
-    __WEBPACK_IMPORTED_MODULE_1__script_js__["b" /* game */].changeState(__WEBPACK_IMPORTED_MODULE_3__constants_js__["a" /* Constants */].game.winState);
+    __WEBPACK_IMPORTED_MODULE_1__script_js__["c" /* game */].changeState(__WEBPACK_IMPORTED_MODULE_3__constants_js__["a" /* Constants */].game.winState);
   }
 
   increaseActions(currentScore) {
@@ -1566,6 +1591,7 @@ function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.
 
 
 
+
 var _increasedSize = /*#__PURE__*/new WeakMap();
 
 var _isOnPause = /*#__PURE__*/new WeakMap();
@@ -1587,9 +1613,9 @@ class PauseButton extends __WEBPACK_IMPORTED_MODULE_0__frame_js__["a" /* Frame *
     _classPrivateFieldSet(this, _increasedSize, 10);
 
     this.interactive = true;
-    this.on('mouseover', this.onMouseOver);
-    this.on('mouseout', this.onMouseOut);
-    this.on('mousedown', this.onMouseDownButton);
+    this.on(__WEBPACK_IMPORTED_MODULE_2__constants_js__["a" /* Constants */].events.over, this.onMouseOver);
+    this.on(__WEBPACK_IMPORTED_MODULE_2__constants_js__["a" /* Constants */].events.out, this.onMouseOut);
+    this.on(__WEBPACK_IMPORTED_MODULE_2__constants_js__["a" /* Constants */].events.click, this.onMouseDownButton);
 
     _classPrivateFieldSet(this, _isOnPause, false);
   }
@@ -1607,20 +1633,22 @@ class PauseButton extends __WEBPACK_IMPORTED_MODULE_0__frame_js__["a" /* Frame *
   }
 
   onMouseDownButton() {
-    if (__WEBPACK_IMPORTED_MODULE_1__script_js__["b" /* game */].getCurrentState() === 'over' || __WEBPACK_IMPORTED_MODULE_1__script_js__["b" /* game */].getCurrentState() === 'win') {
+    if (__WEBPACK_IMPORTED_MODULE_1__script_js__["c" /* game */].getCurrentState() === __WEBPACK_IMPORTED_MODULE_2__constants_js__["a" /* Constants */].gameStates[2] || __WEBPACK_IMPORTED_MODULE_1__script_js__["c" /* game */].getCurrentState() === __WEBPACK_IMPORTED_MODULE_2__constants_js__["a" /* Constants */].gameStates[3]) {
       return;
     }
 
     if (_classPrivateFieldGet(this, _isOnPause)) {
       _classPrivateFieldSet(this, _isOnPause, false);
 
-      __WEBPACK_IMPORTED_MODULE_1__script_js__["b" /* game */].changeState(__WEBPACK_IMPORTED_MODULE_2__constants_js__["a" /* Constants */].game.startState);
+      __WEBPACK_IMPORTED_MODULE_1__script_js__["b" /* endGame */].startCounter();
+      __WEBPACK_IMPORTED_MODULE_1__script_js__["c" /* game */].changeState(__WEBPACK_IMPORTED_MODULE_2__constants_js__["a" /* Constants */].game.startState);
       return;
     }
 
     _classPrivateFieldSet(this, _isOnPause, true);
 
-    __WEBPACK_IMPORTED_MODULE_1__script_js__["b" /* game */].changeState(__WEBPACK_IMPORTED_MODULE_2__constants_js__["a" /* Constants */].game.pauseState);
+    __WEBPACK_IMPORTED_MODULE_1__script_js__["b" /* endGame */].stopCounter();
+    __WEBPACK_IMPORTED_MODULE_1__script_js__["c" /* game */].changeState(__WEBPACK_IMPORTED_MODULE_2__constants_js__["a" /* Constants */].game.pauseState);
   }
 
 }
@@ -1704,7 +1732,7 @@ class Start extends State {
   }
 
   play() {
-    __WEBPACK_IMPORTED_MODULE_0__script_js__["c" /* generatedBoard */].setBlocksInteractiveState(true);
+    __WEBPACK_IMPORTED_MODULE_0__script_js__["d" /* generatedBoard */].setBlocksInteractiveState(true);
   }
 
 }
@@ -1730,7 +1758,7 @@ class Win extends State {
   }
 
   play() {
-    __WEBPACK_IMPORTED_MODULE_0__script_js__["c" /* generatedBoard */].setBlocksInteractiveState(false);
+    __WEBPACK_IMPORTED_MODULE_0__script_js__["d" /* generatedBoard */].setBlocksInteractiveState(false);
     __WEBPACK_IMPORTED_MODULE_0__script_js__["a" /* app */].stage.addChild(_classPrivateFieldGet(this, _win));
   }
 
@@ -1751,7 +1779,7 @@ class PauseState extends State {
   }
 
   setElementsNonInteractive() {
-    __WEBPACK_IMPORTED_MODULE_0__script_js__["c" /* generatedBoard */].setBlocksInteractiveState(false);
+    __WEBPACK_IMPORTED_MODULE_0__script_js__["d" /* generatedBoard */].setBlocksInteractiveState(false);
   }
 
   createPauseNotification() {
@@ -1775,7 +1803,7 @@ class End extends State {
   }
 
   play() {
-    __WEBPACK_IMPORTED_MODULE_0__script_js__["c" /* generatedBoard */].setBlocksInteractiveState(false);
+    __WEBPACK_IMPORTED_MODULE_0__script_js__["d" /* generatedBoard */].setBlocksInteractiveState(false);
   }
 
 }
